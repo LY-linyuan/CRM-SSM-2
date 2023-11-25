@@ -2,7 +2,7 @@ package com.onlyone.crm.settings.web.controller;
 
 import com.onlyone.crm.commons.contants.Contants;
 import com.onlyone.crm.commons.domain.ReturnObject;
-import com.onlyone.crm.commons.utils.DateUtils;
+import com.onlyone.crm.commons.utils.DateUtil;
 import com.onlyone.crm.settings.domain.User;
 import com.onlyone.crm.settings.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +49,8 @@ public class UserController {
             returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
             returnObject.setMessage("用户名或密码错误");
         } else {
-            String nowDateStr = DateUtils.formatDateTime(new Date());
-            if (nowDateStr.compareTo(user.getExpireTime()) < 0) {
+            String nowDateStr = DateUtil.formatDateTime(new Date());
+            if (nowDateStr.compareTo(user.getExpireTime()) > 0) {
                 // 账号过期
                 returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
                 returnObject.setMessage("您的账户已过期");

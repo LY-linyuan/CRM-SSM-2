@@ -2,6 +2,7 @@ package com.onlyone.crm.settings.mapper;
 
 import com.onlyone.crm.settings.domain.User;
 
+import java.util.List;
 import java.util.Map;
 
 public interface UserMapper {
@@ -55,5 +56,7 @@ public interface UserMapper {
 
 
     User selectUserByLoginActAndLoginPwd(Map<String, Object> map);
+
+    List<User> selectAllNoLockStateUser();
 
 }

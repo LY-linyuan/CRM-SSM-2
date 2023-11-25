@@ -7,7 +7,7 @@ import java.util.Date;
  * @Author 临渊
  * @Date 2023-11-25 9:10
  */
-public class DateUtils {
+public class DateUtil {
 
     public static String formatDateTime(Date date) {
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);

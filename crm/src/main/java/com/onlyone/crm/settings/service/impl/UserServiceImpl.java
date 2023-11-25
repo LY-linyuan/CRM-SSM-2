@@ -6,6 +6,7 @@ import com.onlyone.crm.settings.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -23,5 +24,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User selectUserByLoginActAndLoginPwd(Map<String, Object> map) {
         return userMapper.selectUserByLoginActAndLoginPwd(map);
+    }
+
+    @Override
+    public List<User> selectAllNoLockStateUser() {
+        return userMapper.selectAllNoLockStateUser();
     }
 }
