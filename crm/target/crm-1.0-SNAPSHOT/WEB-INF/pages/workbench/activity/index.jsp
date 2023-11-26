@@ -9,11 +9,15 @@ String base = request.getScheme() + "://" + request.getServerName() + ":" + requ
 
 <link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
 <link href="jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="jquery/bs_pagination-master/css/jquery.bs_pagination.min.css">
 
 <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
 <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
 <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
+
+<script type="text/javascript" src="jquery/bs_pagination-master/js/jquery.bs_pagination.min.js"></script>
+<script type="text/javascript" src="jquery/bs_pagination-master/localization/en.js"></script>
 
 <script type="text/javascript">
 
@@ -68,6 +72,7 @@ String base = request.getScheme() + "://" + request.getServerName() + ":" + requ
 						// 重置表单
 						$('#createActivityForm').get(0).reset();
 						// 刷新市场活动列表 稍后做
+						selectActivityByConditionOfPageAndCount(1, $('#demo_pag1').bs_pagination('getOption', 'rowsPerPage'));
 					} else {
 						alert(data.message);
 						$('#createActivityModal').modal('show');
@@ -75,7 +80,6 @@ String base = request.getScheme() + "://" + request.getServerName() + ":" + requ
 				},
 			})
 		})
-
 		$('.myDate').datetimepicker({
 			language : 'zh-CN',	// 语言
 			format : 'yyyy-mm-dd', //日期格式
@@ -85,6 +89,66 @@ String base = request.getScheme() + "://" + request.getServerName() + ":" + requ
 			todayBtn : true, // 设置是否显示"今天"按钮  默认值是false
 			clearBtn : true // 设置是否显示"清空"按钮  默认值是false
 		})
+
+		selectActivityByConditionOfPageAndCount(1, 10);
+
+		function selectActivityByConditionOfPageAndCount (pageNo, pageSize) {
+			var selectActivityName = $('#selectActivityName').val();
+			var selectActivityOwner = $('#selectActivityOwner').val();
+			var startDate = $('#startTime').val();
+			var endDate = $('#endTime').val();
+			$.ajax({
+				url : 'workbench/activity/selectActivityByConditionOfPageAndCount',
+				type : 'POST',
+				data : {
+					name : selectActivityName,
+					owner : selectActivityOwner,
+					startDate : startDate,
+					endDate : endDate,
+					pageNo : pageNo,
+					pageSize : pageSize
+				},
+				dataType : 'json',
+				success : function (data) {
+					var html = '';
+					$.each(data.activityList, function (index, activity) {
+						html += '<tr class="active">';
+						html += '	<td><input type="checkbox" value="' + activity.id + '" /></td>';
+						html += '	<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'detail.html\';">' + activity.name + '</a></td>';
+						html += '	<td>' + activity.owner + '</td>';
+						html += '	<td>' + activity.startDate + '</td>';
+						html += '	<td>' + activity.endDate + '</td>';
+						html += '</tr>';
+					})
+					$('#selectActivityBody').html(html);
+					// $('#selectActivityByConditionCount').text(data.totalRows);
+					var totalPages = 1;
+					if (data.totalRows % pageSize == 0) {
+						totalPages = data.totalRows / pageSize;
+					} else {
+						totalPages = parseInt(data.totalRows / pageSize) + 1;
+					}
+					$('#demo_pag1').bs_pagination({
+						currentPage : pageNo, // 当前页号相当于pageNo
+						rowsPerPage : pageSize, // 每页显示记录条数 相当于pageSize
+						totalRows : data.totalRows, // 总条数
+						totalPages : totalPages, // 总页数必填参数
+						visiblePageLinks: 5, // 最多可以显示的卡片数
+						showGoToPage: true, // 是否显示"跳转到"选项 默认是true
+						showRowsPerPage: true, // 是否显示"每页显示条数"信息 默认是true
+						showRowsInfo: true, // 是否显示"记录"信息 默认是true
+						onChangePage :function (event, pageObj) {
+							selectActivityByConditionOfPageAndCount(pageObj.currentPage, pageObj.rowsPerPage);
+						}
+					})
+				}
+			})
+
+		}
+
+		$('#selectActivityByConditionOfPageAndCountBtn').click(function () {
+			selectActivityByConditionOfPageAndCount(1, $('#demo_pag1').bs_pagination('getOption', 'rowsPerPage'));
+		});
 
 
 	});
@@ -276,14 +340,14 @@ String base = request.getScheme() + "://" + request.getServerName() + ":" + requ
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">名称</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" type="text" id="selectActivityName">
 				    </div>
 				  </div>
 
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">所有者</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" type="text" id="selectActivityOwner">
 				    </div>
 				  </div>
 
@@ -301,7 +365,7 @@ String base = request.getScheme() + "://" + request.getServerName() + ":" + requ
 				    </div>
 				  </div>
 
-				  <button type="submit" class="btn btn-default">查询</button>
+				  <button class="btn btn-default" type="button" id="selectActivityByConditionOfPageAndCountBtn">查询</button>
 
 				</form>
 			</div>
@@ -328,8 +392,8 @@ String base = request.getScheme() + "://" + request.getServerName() + ":" + requ
 							<td>结束日期</td>
 						</tr>
 					</thead>
-					<tbody>
-						<tr class="active">
+					<tbody id="selectActivityBody">
+						<%--<tr class="active">
 							<td><input type="checkbox" /></td>
 							<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='detail.html';">发传单</a></td>
                             <td>zhangsan</td>
@@ -342,14 +406,15 @@ String base = request.getScheme() + "://" + request.getServerName() + ":" + requ
                             <td>zhangsan</td>
                             <td>2020-10-10</td>
                             <td>2020-10-20</td>
-                        </tr>
+                        </tr>--%>
 					</tbody>
 				</table>
+				<div id="demo_pag1"></div>
 			</div>
 
-			<div style="height: 50px; position: relative;top: 30px;">
+			<%--<div style="height: 50px; position: relative;top: 30px;">
 				<div>
-					<button type="button" class="btn btn-default" style="cursor: default;">共<b>50</b>条记录</button>
+					<button type="button" class="btn btn-default" style="cursor: default;">共<b id="selectActivityByConditionCount"></b>条记录</button>
 				</div>
 				<div class="btn-group" style="position: relative;top: -34px; left: 110px;">
 					<button type="button" class="btn btn-default" style="cursor: default;">显示</button>
@@ -380,7 +445,7 @@ String base = request.getScheme() + "://" + request.getServerName() + ":" + requ
 						</ul>
 					</nav>
 				</div>
-			</div>
+			</div>--%>
 
 		</div>
 

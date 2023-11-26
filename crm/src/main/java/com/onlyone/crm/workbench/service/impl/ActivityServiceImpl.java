@@ -6,6 +6,9 @@ import com.onlyone.crm.workbench.service.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * @Author 临渊
  * @Date 2023-11-25 17:08
@@ -20,5 +23,16 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public int saveCreateActivity(Activity activity) {
         return activityMapper.insertActivity(activity);
+    }
+
+
+    @Override
+    public List<Activity> selectActivityByConditionOfPage(Map map) {
+        return activityMapper.selectActivityByConditionOfPage(map);
+    }
+
+    @Override
+    public Integer selectActivityByConditionCount(Map map) {
+        return activityMapper.selectActivityByConditionCount(map);
     }
 }

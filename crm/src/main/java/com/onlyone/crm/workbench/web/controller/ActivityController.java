@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author 临渊
@@ -63,6 +65,26 @@ public class ActivityController {
     }
 
 
+
+    @RequestMapping("/workbench/activity/selectActivityByConditionOfPageAndCount")
+    public @ResponseBody Object selectActivityByConditionOfPageAndCount(String name, String owner, String startDate, String endDate,
+                                                                        Integer pageNo, Integer pageSize) {
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("name", name);
+        map.put("owner", owner);
+        map.put("startDate", startDate);
+        map.put("endDate", endDate);
+        Integer startNo = ( pageNo - 1 ) * pageSize;
+        map.put("startNo", startNo);
+        map.put("pageSize", pageSize);
+        List<Activity> activityList = activityService.selectActivityByConditionOfPage(map);
+        Integer totalRows = activityService.selectActivityByConditionCount(map);
+        Map<String, Object> returnObjectMap = new HashMap<String, Object>();
+        returnObjectMap.put("activityList", activityList);
+        returnObjectMap.put("totalRows", totalRows);
+        return returnObjectMap;
+    }
 
 
 
