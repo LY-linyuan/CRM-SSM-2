@@ -73,6 +73,7 @@ String base = request.getScheme() + "://" + request.getServerName() + ":" + requ
 						$('#createActivityForm').get(0).reset();
 						// 刷新市场活动列表 稍后做
 						selectActivityByConditionOfPageAndCount(1, $('#demo_pag1').bs_pagination('getOption', 'rowsPerPage'));
+						$('#checkboxAllBtn').prop('checked', false);
 					} else {
 						alert(data.message);
 						$('#createActivityModal').modal('show');
@@ -139,6 +140,7 @@ String base = request.getScheme() + "://" + request.getServerName() + ":" + requ
 						showRowsInfo: true, // 是否显示"记录"信息 默认是true
 						onChangePage :function (event, pageObj) {
 							selectActivityByConditionOfPageAndCount(pageObj.currentPage, pageObj.rowsPerPage);
+							$('#checkboxAllBtn').prop('checked', false);
 						}
 					})
 				}
@@ -149,6 +151,142 @@ String base = request.getScheme() + "://" + request.getServerName() + ":" + requ
 		$('#selectActivityByConditionOfPageAndCountBtn').click(function () {
 			selectActivityByConditionOfPageAndCount(1, $('#demo_pag1').bs_pagination('getOption', 'rowsPerPage'));
 		});
+
+		$('#checkboxAllBtn').click(function () {
+			$('#selectActivityBody input[type="checkbox"]').prop('checked', this.checked);
+		})
+
+		$('#selectActivityBody').on('click', 'input[type="checkbox"]', function () {
+
+			if ($('#selectActivityBody input[type="checkbox"]').size() == $('#selectActivityBody input[type="checkbox"]:checked').size()) {
+				$('#checkboxAllBtn').prop('checked', true);
+			} else {
+				$('#checkboxAllBtn').prop('checked', false);
+			}
+		})
+
+		$('#deleteActivityByIdsBtn').click(function () {
+			var checkedIds =$('#selectActivityBody input[type="checkbox"]:checked');
+			if (checkedIds.size() === 0) {
+				alert("请选择要删除的市场活动记录");
+				return;
+			}
+			if (window.confirm("您确定要删除吗？")) {
+				var ids = '';
+				$.each(checkedIds, function () {
+					ids += 'id=' + this.value + "&";
+				});
+				ids = ids.substring(0, ids.length - 1);
+				$.ajax({
+					url : 'workbench/activity/deleteActivityByIds',
+					type : 'POST',
+					data : ids,
+					dataType : 'json',
+					success : function (data) {
+						if (data.code === '1') {
+							selectActivityByConditionOfPageAndCount(1, $('#demo_pag1').bs_pagination('getOption', 'rowsPerPage'));
+							$('#checkboxAllBtn').prop('checked', false);
+						} else {
+							alert(data.message);
+						}
+					}
+				})
+
+
+			}
+
+		})
+
+
+		$('#editSelectActivityById').click(function () {
+			var checkboxChecked = $('#selectActivityBody input[type="checkbox"]:checked');
+			if (checkboxChecked.size() === 0) {
+				alert('请选择需要修改的市场活动');
+				return;
+			} else if(checkboxChecked.size() > 1) {
+				alert('一次只能修改一条市场活动');
+				return;
+			} else {
+				var id = checkboxChecked[0].value;
+				$.ajax({
+					url : 'workbench/activity/selectActivityById',
+					type : 'POST',
+					data : {
+						id : id,
+					},
+					dataType : 'json',
+					success : function (data) {
+						$('#edit-marketActivityId').val(data.id);
+						$('#edit-marketActivityOwner').val(data.owner);
+						$('#edit-marketActivityName').val(data.name);
+						$('#edit-startTime').val(data.startDate);
+						$('#edit-endTime').val(data.endDate);
+						$('#edit-cost').val(data.cost);
+						$('#edit-describe').val(data.description);
+						$('#editActivityModal').modal('show');
+					}
+				})
+			}
+
+
+
+		})
+
+		$('#updateActivityById').click(function () {
+			var id = $('#edit-marketActivityId').val();
+			var owner = $('#edit-marketActivityOwner').val();
+			var name = $('#edit-marketActivityName').val();
+			var startDate = $('#edit-startTime').val();
+			var endDate = $('#edit-endTime').val();
+			var cost = $('#edit-cost').val();
+			var description = $('#edit-describe').val();
+			if (owner === '') {
+				alert("所有者不能为空!");
+				return;
+			}
+			if (name === '') {
+				alert("名称不能为空!");
+				return;
+			}
+			if (startDate != '' && endDate != '') {
+				if (startDate > endDate) {
+					alert("结束日期不能比开始日期小!");
+					return;
+				}
+			}
+
+			var regExp = /^(([1-9]\d*)|0)$/;
+			if (!regExp.test(cost)) {
+				alert("费用只能为非负整数!");
+				return;
+			}
+			$.ajax({
+				url : 'workbench/activity/updateActivityById',
+				type : 'POST',
+				data : {
+					id : id,
+					owner : owner,
+					name : name,
+					startDate : startDate,
+					endDate : endDate,
+					cost : cost,
+					description : description,
+				},
+				dataType : 'json',
+				success : function (data) {
+					if (data.code === '1') {
+						selectActivityByConditionOfPageAndCount($('#demo_pag1').bs_pagination('getOption', 'currentPage'), $('#demo_pag1').bs_pagination('getOption', 'rowsPerPage'));
+						$('#checkboxAllBtn').prop('checked', false);
+						$('#editActivityModal').modal('hide');
+					} else {
+						alert(data.message);
+						$('#editActivityModal').modal('show');
+					}
+				}
+			});
+
+		})
+
 
 
 	});
@@ -234,13 +372,14 @@ String base = request.getScheme() + "://" + request.getServerName() + ":" + requ
 
 					<form class="form-horizontal" role="form">
 
+						<div id="edit-marketActivityId" hidden></div>
 						<div class="form-group">
 							<label for="edit-marketActivityOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
 								<select class="form-control" id="edit-marketActivityOwner">
-								  <option>zhangsan</option>
-								  <option>lisi</option>
-								  <option>wangwu</option>
+									<c:forEach items="${userList}" var="user">
+										<option value="${user.id}">${user.name}</option>
+									</c:forEach>
 								</select>
 							</div>
                             <label for="edit-marketActivityName" class="col-sm-2 control-label">名称<span style="font-size: 15px; color: red;">*</span></label>
@@ -252,11 +391,11 @@ String base = request.getScheme() + "://" + request.getServerName() + ":" + requ
 						<div class="form-group">
 							<label for="edit-startTime" class="col-sm-2 control-label">开始日期</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="edit-startTime" value="2020-10-10">
+								<input type="text" class="form-control myDate" id="edit-startTime" readonly value="2020-10-10">
 							</div>
 							<label for="edit-endTime" class="col-sm-2 control-label">结束日期</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="edit-endTime" value="2020-10-20">
+								<input type="text" class="form-control myDate" id="edit-endTime" readonly value="2020-10-20">
 							</div>
 						</div>
 
@@ -279,7 +418,7 @@ String base = request.getScheme() + "://" + request.getServerName() + ":" + requ
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal">更新</button>
+					<button type="button" id="updateActivityById" class="btn btn-primary">更新</button>
 				</div>
 			</div>
 		</div>
@@ -372,8 +511,8 @@ String base = request.getScheme() + "://" + request.getServerName() + ":" + requ
 			<div class="btn-toolbar" role="toolbar" style="background-color: #F7F7F7; height: 50px; position: relative;top: 5px;">
 				<div class="btn-group" style="position: relative; top: 18%;">
 				  <button type="button" class="btn btn-primary" id="creatActivityBtn"><span class="glyphicon glyphicon-plus"></span> 创建</button>
-				  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editActivityModal"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
-				  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+				  <button type="button" class="btn btn-default" id="editSelectActivityById"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
+				  <button type="button" class="btn btn-danger" id="deleteActivityByIdsBtn" ><span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>
 				<div class="btn-group" style="position: relative; top: 18%;">
                     <button type="button" class="btn btn-default" data-toggle="modal" data-target="#importActivityModal" ><span class="glyphicon glyphicon-import"></span> 上传列表数据（导入）</button>
@@ -385,7 +524,7 @@ String base = request.getScheme() + "://" + request.getServerName() + ":" + requ
 				<table class="table table-hover">
 					<thead>
 						<tr style="color: #B3B3B3;">
-							<td><input type="checkbox" /></td>
+							<td><input type="checkbox" id="checkboxAllBtn" /></td>
 							<td>名称</td>
                             <td>所有者</td>
 							<td>开始日期</td>

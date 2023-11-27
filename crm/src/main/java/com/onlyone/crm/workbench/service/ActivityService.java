@@ -17,4 +17,10 @@ public interface ActivityService {
 
     Integer selectActivityByConditionCount(Map map);
 
+    Integer deleteActivityByIds(String[] id);
+
+    Activity selectActivityById(String id);
+
+    Integer updateActivityById(Activity activity);
+
 }

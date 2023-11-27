@@ -266,6 +266,31 @@
     </where>
   </select>
 
+  <delete id="deleteActivityByIds">
+    delete from tbl_activity
+    where id in
+    <foreach collection="array" item="id" open="(" close=")" separator=",">
+        #{id}
+    </foreach>
+  </delete>
+
+  <select id="selectActivityById" parameterType="String" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>
+        from tbl_activity where id = #{id}
+  </select>
+
+  <update id="updateActivityById" parameterType="Activity">
+    update tbl_activity
+    set owner = #{owner,jdbcType=CHAR},
+        name = #{name,jdbcType=VARCHAR},
+        start_date = #{startDate,jdbcType=CHAR},
+        end_date = #{endDate,jdbcType=CHAR},
+        cost = #{cost,jdbcType=VARCHAR},
+        description = #{description,jdbcType=VARCHAR},
+        edit_time = #{editTime,jdbcType=CHAR},
+        edit_by = #{editBy,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=CHAR}
+  </update>
 
 
 

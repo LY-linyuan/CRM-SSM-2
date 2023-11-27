@@ -86,6 +86,51 @@ public class ActivityController {
         return returnObjectMap;
     }
 
+    @RequestMapping("/workbench/activity/deleteActivityByIds")
+    public @ResponseBody Object deleteActivityByIds(String[] id) {
+        ReturnObject returnObject = new ReturnObject();
+        try {
+            Integer count = activityService.deleteActivityByIds(id);
+            if (count > 0) {
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+            } else {
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                returnObject.setMessage("系统繁忙...请稍后再试");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("系统繁忙...请稍后再试");
+        }
+        return returnObject;
+    }
+
+
+    @RequestMapping("/workbench/activity/selectActivityById")
+    public @ResponseBody Object selectActivityById(String id) {
+        return activityService.selectActivityById(id);
+    }
+
+    @RequestMapping("/workbench/activity/updateActivityById")
+    public @ResponseBody Object updateActivityById(Activity activity, HttpServletRequest request) {
+        activity.setEditTime(DateUtil.formatDateTime(new Date()));
+        activity.setEditBy(((User) request.getSession().getAttribute(Contants.SESSION_USER)).getId());
+        ReturnObject returnObject = new ReturnObject();
+        try {
+            Integer count = activityService.updateActivityById(activity);
+            if (count == 1) {
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+            } else {
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                returnObject.setMessage("系统繁忙...请稍后再试");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("系统繁忙...请稍后再试");
+        }
+        return returnObject;
+    }
 
 
 }

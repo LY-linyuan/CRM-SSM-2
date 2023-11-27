@@ -76,4 +76,27 @@ public interface ActivityMapper {
      * @return
      */
     Integer selectActivityByConditionCount(Map map);
+
+
+    /**
+     * 根据复选框删除市场活动
+     * @param id
+     * @return
+     */
+    Integer deleteActivityByIds(String[] id);
+
+
+    /**
+     * 根据id查询市场活动
+     * @param id
+     * @return
+     */
+    Activity selectActivityById(String id);
+
+    /**
+     * 根据id修改市场活动
+     * @param activity
+     * @return
+     */
+    Integer updateActivityById(Activity activity);
 }
