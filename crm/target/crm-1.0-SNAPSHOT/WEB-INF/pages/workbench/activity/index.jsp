@@ -287,6 +287,46 @@ String base = request.getScheme() + "://" + request.getServerName() + ":" + requ
 
 		})
 
+		$('#exportActivityAllBtn').click(function () {
+			window.location.href = 'workbench/activity/exportAllActivities';
+		})
+
+		$('#importActivityBtn').click(function () {
+			var activityFileName = $('#activityFile').val();
+			var suffix = activityFileName.substr(activityFileName.lastIndexOf(".") + 1).toLocaleLowerCase();
+			if (suffix != 'xls') {
+				alert('只支持excel文件！');
+				return;
+			}
+			var activityFile = $('#activityFile')[0].files[0];
+			if (activityFile.size > 1024 * 1024 * 5) {
+				alert('文件大小不能超过5MB！');
+				return;
+			}
+			var formData = new FormData();
+			formData.append("activityFile", activityFile);
+			$.ajax({
+				url : 'workbench/activity/importActivityList',
+				data : formData,
+				processData : false, // 设置ajax想后台提交参数之前，是否吧参数统一转换成字符串 默认是true
+				contentType : false, // 设置ajax想后台提交参数之前,是否吧所有的参数统一安urlencoded编码 默认是tyue
+				type : 'POST',
+				dataType : 'json',
+				success : function (data) {
+					if (data.code == 1) {
+						alert('成功导入: ' + data.message + '条市场活动！');
+						selectActivityByConditionOfPageAndCount(1, $('#demo_pag1').bs_pagination('getOption', 'rowsPerPage'));
+						$('#checkboxAllBtn').prop('checked', false);
+						$('#importActivityModal').modal('hide');
+					} else {
+						alert(data.message);
+						$('#importActivityModal').modal('show');
+						return;
+					}
+				}
+			})
+
+		})
 
 
 	});

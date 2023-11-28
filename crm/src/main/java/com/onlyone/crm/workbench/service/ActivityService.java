@@ -23,4 +23,8 @@ public interface ActivityService {
 
     Integer updateActivityById(Activity activity);
 
+    List<Activity> selectAllActivities();
+
+    Integer insertActivityList(List<Activity> activityList);
+
 }

@@ -99,4 +99,18 @@ public interface ActivityMapper {
      * @return
      */
     Integer updateActivityById(Activity activity);
+
+    /**
+     * 查询所有的市场活动
+     * @return
+     */
+    List<Activity> selectAllActivities();
+
+
+    /**
+     * 导入市场活动List
+     * @param activityList
+     * @return
+     */
+    Integer insertActivityList(List<Activity> activityList);
 }

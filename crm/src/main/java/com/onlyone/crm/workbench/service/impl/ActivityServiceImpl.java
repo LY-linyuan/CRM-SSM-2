@@ -50,4 +50,14 @@ public class ActivityServiceImpl implements ActivityService {
     public Integer updateActivityById(Activity activity) {
         return activityMapper.updateActivityById(activity);
     }
+
+    @Override
+    public List<Activity> selectAllActivities() {
+        return activityMapper.selectAllActivities();
+    }
+
+    @Override
+    public Integer insertActivityList(List<Activity> activityList) {
+        return activityMapper.insertActivityList(activityList);
+    }
 }
