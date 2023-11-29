@@ -115,7 +115,8 @@ String base = request.getScheme() + "://" + request.getServerName() + ":" + requ
 					$.each(data.activityList, function (index, activity) {
 						html += '<tr class="active">';
 						html += '	<td><input type="checkbox" value="' + activity.id + '" /></td>';
-						html += '	<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'detail.html\';">' + activity.name + '</a></td>';
+						/*html += '	<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'detail.html\';">' + activity.name + '</a></td>';*/
+						html += '	<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/activity/detailActivity?activityId=' + activity.id + '\';">' + activity.name + '</a></td>';
 						html += '	<td>' + activity.owner + '</td>';
 						html += '	<td>' + activity.startDate + '</td>';
 						html += '	<td>' + activity.endDate + '</td>';

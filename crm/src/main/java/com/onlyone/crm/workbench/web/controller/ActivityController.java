@@ -8,6 +8,8 @@ import com.onlyone.crm.commons.utils.UUIDUtil;
 import com.onlyone.crm.settings.domain.User;
 import com.onlyone.crm.settings.service.UserService;
 import com.onlyone.crm.workbench.domain.Activity;
+import com.onlyone.crm.workbench.domain.ActivityRemark;
+import com.onlyone.crm.workbench.mapper.ActivityRemarkMapper;
 import com.onlyone.crm.workbench.service.ActivityService;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -37,6 +39,8 @@ public class ActivityController {
     private UserService userService;
     @Autowired
     private ActivityService activityService;
+    @Autowired
+    private ActivityRemarkMapper activityRemarkMapper;
 
     public ActivityController() throws FileNotFoundException {
     }
@@ -277,6 +281,15 @@ public class ActivityController {
             returnObject.setMessage("当前网络繁忙...请稍后再试");
         }
         return returnObject;
+    }
+
+    @RequestMapping("/workbench/activity/detailActivity")
+    public String detailActivity(String activityId, HttpServletRequest request) {
+        Activity activity = activityService.selectActivityForDetailById(activityId);
+        List<ActivityRemark> activityRemarkList = activityRemarkMapper.selectActivityRemarkListForDetailByActivityId(activityId);
+        request.setAttribute("activity", activity);
+        request.setAttribute("activityRemarkList", activityRemarkList);
+        return "workbench/activity/detail";
     }
 
 }

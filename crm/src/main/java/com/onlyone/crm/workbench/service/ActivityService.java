@@ -27,4 +27,6 @@ public interface ActivityService {
 
     Integer insertActivityList(List<Activity> activityList);
 
+    Activity selectActivityForDetailById(String id);
+
 }
