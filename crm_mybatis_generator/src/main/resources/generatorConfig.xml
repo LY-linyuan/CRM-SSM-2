@@ -69,7 +69,11 @@
                              targetProject="C:/programme/JAVATEST/TestProject/SSM/CRM-SSM/code/crm_project/crm/src/main/java" type="XMLMAPPER">
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
-
+        <!--<table tableName="tbl_dic_value" domainObjectName="DicValue"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>-->
 
         <!--<table tableName="tbl_user" domainObjectName="User"
                enableCountByExample="false" enableUpdateByExample="false"
@@ -87,7 +91,11 @@
                enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false">
         </table>-->
-
+        <!--<table tableName="tbl_clue" domainObjectName="Clue"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>-->
         <!--
                 <table tableName="tbl_clue" domainObjectName="Clue"
                        enableCountByExample="false" enableUpdateByExample="false"
