@@ -525,7 +525,7 @@ String base = request.getScheme() + "://" + request.getServerName() + ":" + requ
 					<tbody>
 						<tr>
 							<td><input type="checkbox" /></td>
-							<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='detail.html';">李四先生</a></td>
+							<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='workbench/clue/detailClue?id=13c9e96666614c26ad4b52fc9b450d5c';">李四先生</a></td>
 							<td>动力节点</td>
 							<td>010-84846003</td>
 							<td>12345678901</td>
@@ -535,7 +535,7 @@ String base = request.getScheme() + "://" + request.getServerName() + ":" + requ
 						</tr>
                         <tr class="active">
                             <td><input type="checkbox" /></td>
-                            <td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='detail.html';">李四先生</a></td>
+                            <td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='workbench/clue/detailClue?id=70f1df38dc8f477ea81a41d068c0399d';">李四先生</a></td>
                             <td>动力节点</td>
                             <td>010-84846003</td>
                             <td>12345678901</td>

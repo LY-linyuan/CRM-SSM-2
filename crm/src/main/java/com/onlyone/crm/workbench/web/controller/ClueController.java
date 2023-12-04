@@ -8,7 +8,11 @@ import com.onlyone.crm.settings.domain.DicValue;
 import com.onlyone.crm.settings.domain.User;
 import com.onlyone.crm.settings.service.DicValueService;
 import com.onlyone.crm.settings.service.UserService;
+import com.onlyone.crm.workbench.domain.Activity;
 import com.onlyone.crm.workbench.domain.Clue;
+import com.onlyone.crm.workbench.domain.ClueRemark;
+import com.onlyone.crm.workbench.service.ActivityService;
+import com.onlyone.crm.workbench.service.ClueRemarkService;
 import com.onlyone.crm.workbench.service.ClueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -34,6 +38,12 @@ public class ClueController {
     UserService userService;
     @Autowired
     ClueService clueService;
+
+    @Autowired
+    ActivityService activityService;
+
+    @Autowired
+    ClueRemarkService clueRemarkService;
 
 
     @RequestMapping("/workbench/clue/index")
@@ -70,5 +80,18 @@ public class ClueController {
             returnObject.setMessage("当前系统繁忙...请稍后再试");
         }
         return returnObject;
+    }
+
+
+    @RequestMapping("/workbench/clue/detailClue")
+    public String detailClue(String id, HttpServletRequest request) {
+
+        Clue clue = clueService.selectDetailClueByClueId(id);
+        List<ClueRemark> clueRemarkList = clueRemarkService.selectClueRemarkByClueId(id);
+        List<Activity> activityList = activityService.selectActivityListByClueActivityRelationByClueId(id);
+        request.setAttribute("clue", clue);
+        request.setAttribute("clueRemarkList", clueRemarkList);
+        request.setAttribute("activityList", activityList);
+        return "workbench/clue/detail";
     }
 }

@@ -323,5 +323,37 @@
             #{nextContactTime,jdbcType=CHAR}, #{address,jdbcType=VARCHAR})
   </insert>
 
+  <select id="selectDetailClueByClueId" parameterType="String" resultMap="BaseResultMap">
+    select tc.id,
+           tc.fullname,
+           tv1.value appellation,
+           tu1.name owner,
+           tc.company,
+           tc.job,
+           tc.email,
+           tc.phone,
+           tc.website,
+           tc.mphone,
+           tv2.value  state,
+           tv3.value  source,
+           tu2.name create_by,
+           tc.create_time,
+           tu3.name edit_by,
+           tc.edit_time,
+           tc.description,
+           tc.contact_summary,
+           tc.next_contact_time,
+           tc.address
+      from tbl_clue tc
+      left join tbl_dic_value tv1 on tc.appellation = tv1.id
+      join tbl_user tu1 on tc.owner = tu1.id
+      left join tbl_dic_value tv2 on tc.state = tv2.id
+      left join tbl_dic_value tv3 on tc.source = tv3.id
+      join tbl_user tu2 on tc.create_by = tu2.id
+      left join tbl_user tu3 on tc.edit_by = tu3.id
+      where tc.id = #{id}
+
+  </select>
+
 
 </mapper>

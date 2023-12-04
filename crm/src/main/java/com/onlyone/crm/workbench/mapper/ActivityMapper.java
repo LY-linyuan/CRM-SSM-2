@@ -119,4 +119,7 @@ public interface ActivityMapper {
      * @return
      */
     Activity selectActivityForDetailById(String id);
+
+
+    List<Activity> selectActivityListByClueActivityRelationByClueId(String clueId);
 }
