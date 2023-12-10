@@ -63,8 +63,22 @@ public interface ClueActivityRelationMapper {
 
     /**
      * 根据ClueActivityRelationId 删除 ClueActivityRelation
-     * @param id
+     * @param clueActivityRelation
      * @return
      */
     int deleteClueActivityRelationById(ClueActivityRelation clueActivityRelation);
+
+    /**
+     * 根据clueId查询clueActivityRelationList
+     * @param clueId
+     * @return
+     */
+    List<ClueActivityRelation> selectClueActivityRelationByClueId(String clueId);
+
+    /**
+     * 根据clueId 删除 clueActivityRelation
+     * @param clueId
+     * @return
+     */
+    int deleteClueActivityRelationByClueId(String clueId);
 }

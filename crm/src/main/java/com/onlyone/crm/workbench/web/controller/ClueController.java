@@ -155,4 +155,49 @@ public class ClueController {
         }
         return returnObject;
     }
+
+
+    @RequestMapping("/workbench/clue/toConvert")
+    public String toConvert(String id, HttpServletRequest request) {
+        Clue clue = clueService.selectDetailClueByClueId(id);
+        List<DicValue> stageList = dicValueService.selectDicValueByTypeCode("stage");
+        request.setAttribute("clue", clue);
+        request.setAttribute("stageList", stageList);
+        return "workbench/clue/convert";
+    }
+
+
+    @RequestMapping("/workbench/clue/selectConvertActivityListByLikeNameAndClueId")
+    public @ResponseBody Object selectConvertActivityListByLikeNameAndClueId(String activityName, String clueId) {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("activityName", activityName);
+        map.put("clueId", clueId);
+        return activityService.selectConvertActivityListByLikeNameAndClueId(map);
+    }
+
+    @RequestMapping("/workbench/clue/convertClue")
+    public @ResponseBody Object convertClue(String clueId, String money, String name,
+                                            String expectedDate, String stage, String activityId,
+                                            String isCreateTran, HttpSession session) {
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("clueId", clueId);
+        map.put("monet", money);
+        map.put("name", name);
+        map.put("expectedDate", expectedDate);
+        map.put("stage", stage);
+        map.put("activityId", activityId);
+        map.put("isCreateTran", isCreateTran);
+        map.put(Contants.SESSION_USER, (User) session.getAttribute(Contants.SESSION_USER));
+        ReturnObject returnObject = new ReturnObject();
+        try {
+            clueService.saveConvertClue(map);
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+        } catch (Exception e) {
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("网络繁忙...请稍后再试");
+        }
+        return returnObject;
+    }
 }

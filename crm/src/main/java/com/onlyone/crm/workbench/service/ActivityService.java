@@ -35,4 +35,6 @@ public interface ActivityService {
 
     List<Activity> selectActivityListByActivityId(String[] ids);
 
+    List<Activity> selectConvertActivityListByLikeNameAndClueId(Map<String, String> map);
+
 }

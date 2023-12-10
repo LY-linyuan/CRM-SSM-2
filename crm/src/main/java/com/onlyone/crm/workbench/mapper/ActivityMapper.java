@@ -142,4 +142,11 @@ public interface ActivityMapper {
      * @return
      */
     List<Activity> selectActivityListByActivityId(String[] ids);
+
+    /**
+     * 在转换线索时 在 已经关联的市场活动中 根据名字进行模糊查询
+     * @param map
+     * @return
+     */
+    List<Activity> selectConvertActivityListByLikeNameAndClueId(Map<String, String> map);
 }

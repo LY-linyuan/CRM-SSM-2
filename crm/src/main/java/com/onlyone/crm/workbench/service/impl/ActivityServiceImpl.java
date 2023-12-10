@@ -80,4 +80,9 @@ public class ActivityServiceImpl implements ActivityService {
     public List<Activity> selectActivityListByActivityId(String[] ids) {
         return activityMapper.selectActivityListByActivityId(ids);
     }
+
+    @Override
+    public List<Activity> selectConvertActivityListByLikeNameAndClueId(Map<String, String> map) {
+        return activityMapper.selectConvertActivityListByLikeNameAndClueId(map);
+    }
 }
