@@ -31,4 +31,8 @@ public interface ActivityService {
 
     List<Activity> selectActivityListByClueActivityRelationByClueId(String clueId);
 
+    List<Activity> selectActivityListByLikeNameAndClueId(Map<String, String> map);
+
+    List<Activity> selectActivityListByActivityId(String[] ids);
+
 }

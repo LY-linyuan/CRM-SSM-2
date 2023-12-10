@@ -121,5 +121,25 @@ public interface ActivityMapper {
     Activity selectActivityForDetailById(String id);
 
 
+    /**
+     * 根据clueId查询clue所关联的市场活动
+     * @param clueId
+     * @return
+     */
     List<Activity> selectActivityListByClueActivityRelationByClueId(String clueId);
+
+    /**
+     * 根据 activityName模糊查询市场活动 并 根据ClueId排除已经关联的市场活动的项目
+     * @param map
+     * @return
+     */
+    List<Activity> selectActivityListByLikeNameAndClueId(Map<String, String> map);
+
+
+    /**
+     * 根据activityId Array 数组 查询 ActivityList集合
+     * @param ids
+     * @return
+     */
+    List<Activity> selectActivityListByActivityId(String[] ids);
 }

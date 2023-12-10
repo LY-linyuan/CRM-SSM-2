@@ -10,8 +10,10 @@ import com.onlyone.crm.settings.service.DicValueService;
 import com.onlyone.crm.settings.service.UserService;
 import com.onlyone.crm.workbench.domain.Activity;
 import com.onlyone.crm.workbench.domain.Clue;
+import com.onlyone.crm.workbench.domain.ClueActivityRelation;
 import com.onlyone.crm.workbench.domain.ClueRemark;
 import com.onlyone.crm.workbench.service.ActivityService;
+import com.onlyone.crm.workbench.service.ClueActivityRelationService;
 import com.onlyone.crm.workbench.service.ClueRemarkService;
 import com.onlyone.crm.workbench.service.ClueService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @Author 临渊
@@ -44,6 +45,9 @@ public class ClueController {
 
     @Autowired
     ClueRemarkService clueRemarkService;
+
+    @Autowired
+    ClueActivityRelationService clueActivityRelationService;
 
 
     @RequestMapping("/workbench/clue/index")
@@ -93,5 +97,62 @@ public class ClueController {
         request.setAttribute("clueRemarkList", clueRemarkList);
         request.setAttribute("activityList", activityList);
         return "workbench/clue/detail";
+    }
+
+    @RequestMapping("/workbench/clue/selectActivityListByLikeNameAndClueId")
+    public @ResponseBody Object selectActivityListByLikeNameAndClueId(String activityName, String clueId) {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("activityName", activityName);
+        map.put("clueId", clueId);
+        return activityService.selectActivityListByLikeNameAndClueId(map);
+
+    }
+
+    @RequestMapping("/workbench/clue/saveClueActivityRelation")
+    public @ResponseBody Object saveClueActivityRelation(String[] activityIds, String clueId) {
+        ReturnObject returnObject = new ReturnObject();
+        List<ClueActivityRelation> clueActivityRelationList = new ArrayList<ClueActivityRelation>();
+        for (String activityId : activityIds) {
+            ClueActivityRelation clueActivityRelation = new ClueActivityRelation();
+            clueActivityRelation.setId(UUIDUtil.getUUID());
+            clueActivityRelation.setClueId(clueId);
+            clueActivityRelation.setActivityId(activityId);
+            clueActivityRelationList.add(clueActivityRelation);
+        }
+        try {
+            int count = clueActivityRelationService.saveCreateClueActivityRelationByList(clueActivityRelationList);
+            if (count == activityIds.length) {
+                List<Activity> activityList = activityService.selectActivityListByActivityId(activityIds);
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+                returnObject.setRetData(activityList);
+            } else {
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                returnObject.setMessage("网络繁忙...请稍后再试");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("网络繁忙...请稍后再试");
+        }
+        return returnObject;
+    }
+
+    @RequestMapping("/workbench/clue/deleteClueActivityRelationById")
+    public @ResponseBody Object deleteClueActivityRelationById(ClueActivityRelation clueActivityRelation) {
+        ReturnObject returnObject = new ReturnObject();
+        try {
+            int count = clueActivityRelationService.deleteClueActivityRelationById(clueActivityRelation);
+            if (count == 1) {
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+            } else {
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                returnObject.setMessage("当前网络繁忙...请稍后再试");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("当前网络繁忙...请稍后再试");
+        }
+        return returnObject;
     }
 }

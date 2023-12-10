@@ -50,6 +50,104 @@ String base = request.getScheme() + "://" + request.getServerName() + ":" + requ
 		$(".myHref").mouseout(function(){
 			$(this).children("span").css("color","#E6E6E6");
 		});
+
+		$('#bundActivityBtn').click(function () {
+			$('#bundModal').modal('show');
+		})
+
+		$('#bundSelectActivityByNameInput').keyup(function () {
+
+			var activityName = $.trim(this.value);
+			var clueId = '${clue.id}';
+			$.ajax({
+				url : 'workbench/clue/selectActivityListByLikeNameAndClueId',
+				data : {
+					clueId : clueId,
+					activityName : activityName
+				},
+				type : 'POST',
+				dataType : 'json',
+				success : function (data) {
+					var html = '';
+					$.each(data, function (index, activity) {
+						html += '<tr>';
+						html += '<td><input type="checkbox" value="' + activity.id + '"/></td>';
+						html += '<td>' + activity.name + '</td>';
+						html += '<td>' + activity.startDate + '</td>';
+						html += '<td>' + activity.endDate + '</td>';
+						html += '<td>' + activity.owner + '</td>';
+						html += '</tr>';
+					});
+					$('#bundSelectActivityTBody').html(html);
+
+				}
+			})
+		})
+
+		$('#saveClueActivityRelationBtn').click(function () {
+			var activityIds = $('#bundSelectActivityTBody input[type="checkbox"]:checked');
+			if (activityIds.size() === 0) {
+				alert("请选择需要关联的市场活动");
+			}
+			var data = '';
+			$.each(activityIds, function () {
+				data += "activityIds=" + this.value + "&";
+			});
+			data += 'clueId=${clue.id}';
+			$.ajax({
+				url : 'workbench/clue/saveClueActivityRelation',
+				data : data,
+				type : 'POST',
+				dataType : 'json',
+				success : function (data) {
+					if (data.code === '1') {
+						var html = '';
+						$.each(data.retData, function (index, activity) {
+							html += '<tr id="tr_${activity.id}">';
+							html += '<td>' + activity.name + '</td>';
+							html += '<td>' + activity.startDate + '</td>';
+							html += '<td>' + activity.endDate + '</td>';
+							html += '<td>' + activity.owner + '</td>';
+							html += '<td><a href="javascript:void(0);" activityId="${activity.id}"  style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>解除关联</a></td>';
+							html += '</tr>';
+						})
+						$('#clueActivityRelationAlreadyTBody').append(html);
+						$('#bundModal').modal('hide');
+					} else {
+						alert(data.message);
+						$('#bundModal').modal('show');
+					}
+				}
+			})
+
+		})
+
+		$('#clueActivityRelationAlreadyTBody').on('click', 'a', function () {
+			var activityId = $(this).attr('activityId');
+			var clueId = '${clue.id}';
+			if (window.confirm("确定删除吗?")) {
+				$.ajax({
+					url : 'workbench/clue/deleteClueActivityRelationById',
+					data : {
+						activityId : activityId,
+						clueId : clueId
+					},
+					type : 'POST',
+					dataType : 'json',
+					success : function (data) {
+						if (data.code === '1') {
+							$('#tr_' + activityId).remove();
+						} else {
+							alert(data.message);
+						}
+					}
+				})
+			}
+
+
+		})
+
+
 	});
 
 </script>
@@ -71,7 +169,7 @@ String base = request.getScheme() + "://" + request.getServerName() + ":" + requ
 					<div class="btn-group" style="position: relative; top: 18%; left: 8px;">
 						<form class="form-inline" role="form">
 						  <div class="form-group has-feedback">
-						    <input type="text" class="form-control" style="width: 300px;" placeholder="请输入市场活动名称，支持模糊查询">
+						    <input id="bundSelectActivityByNameInput" type="text" class="form-control" style="width: 300px;" placeholder="请输入市场活动名称，支持模糊查询">
 						    <span class="glyphicon glyphicon-search form-control-feedback"></span>
 						  </div>
 						</form>
@@ -87,8 +185,8 @@ String base = request.getScheme() + "://" + request.getServerName() + ":" + requ
 								<td></td>
 							</tr>
 						</thead>
-						<tbody>
-							<tr>
+						<tbody id="bundSelectActivityTBody">
+							<%--<tr>
 								<td><input type="checkbox"/></td>
 								<td>发传单</td>
 								<td>2020-10-10</td>
@@ -101,13 +199,13 @@ String base = request.getScheme() + "://" + request.getServerName() + ":" + requ
 								<td>2020-10-10</td>
 								<td>2020-10-20</td>
 								<td>zhangsan</td>
-							</tr>
+							</tr>--%>
 						</tbody>
 					</table>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal">关联</button>
+					<button type="button" id="saveClueActivityRelationBtn" class="btn btn-primary">关联</button>
 				</div>
 			</div>
 		</div>
@@ -298,14 +396,14 @@ String base = request.getScheme() + "://" + request.getServerName() + ":" + requ
 							<td></td>
 						</tr>
 					</thead>
-					<tbody>
+					<tbody id="clueActivityRelationAlreadyTBody">
 						<c:forEach items="${activityList}" var="activity">
-							<tr>
+							<tr id="tr_${activity.id}">
 								<td>${activity.name}</td>
 								<td>${activity.startDate}</td>
 								<td>${activity.endDate}</td>
 								<td>${activity.owner}</td>
-								<td><a href="javascript:void(0);"  style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>解除关联</a></td>
+								<td><a href="javascript:void(0);" activityId="${activity.id}"  style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>解除关联</a></td>
 							</tr>
 						</c:forEach>
 						<%--<tr>
@@ -327,7 +425,7 @@ String base = request.getScheme() + "://" + request.getServerName() + ":" + requ
 			</div>
 
 			<div>
-				<a href="javascript:void(0);" data-toggle="modal" data-target="#bundModal" style="text-decoration: none;"><span class="glyphicon glyphicon-plus"></span>关联市场活动</a>
+				<a id="bundActivityBtn" href="javascript:void(0);" <%--data-toggle="modal" data-target="#bundModal"--%> style="text-decoration: none;"><span class="glyphicon glyphicon-plus"></span>关联市场活动</a>
 			</div>
 		</div>
 	</div>
