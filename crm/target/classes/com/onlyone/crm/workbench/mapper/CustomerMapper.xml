@@ -237,4 +237,15 @@
            )
   </insert>
 
+  <select id="selectAllCustomerName" parameterType="String" resultType="String">
+    select name from tbl_customer where name like concat('%', #{name},'%')
+  </select>
+
+  <select id="selectCustomerByName" parameterType="String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tbl_customer
+    where name = #{customerName,jdbcType=CHAR}
+  </select>
+
 </mapper>
