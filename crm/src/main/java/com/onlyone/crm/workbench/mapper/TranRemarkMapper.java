@@ -59,4 +59,11 @@ public interface TranRemarkMapper {
      * @return
      */
     int insertTranRemarkByList(List<TranRemark> trList);
+
+    /**
+     * 根据TranId查询 TranRemarkList
+     * @param tranId
+     * @return
+     */
+    List<TranRemark> selectTranRemarkForDetailByTranId(String tranId);
 }

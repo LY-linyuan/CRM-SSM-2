@@ -1,6 +1,9 @@
 package com.onlyone.crm.workbench.mapper;
 
+import com.onlyone.crm.workbench.domain.FunnelVO;
 import com.onlyone.crm.workbench.domain.Tran;
+
+import java.util.List;
 
 public interface TranMapper {
     /**
@@ -57,4 +60,18 @@ public interface TranMapper {
      * @return
      */
     int insertTran(Tran tran);
+
+    /**
+     * 根据TranId查询交易明细
+     * @param id
+     * @return
+     */
+    Tran selectTranForDetailById(String id);
+
+    /**
+     * 查询交易个数
+     * @return
+     */
+    List<FunnelVO> selectCountOfTranGroupByStage();
+
 }

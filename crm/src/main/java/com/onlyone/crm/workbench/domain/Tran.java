@@ -147,6 +147,10 @@ public class Tran {
      */
     private String nextContactTime;
 
+    private String possibility;
+
+    private String orderNo;
+
 
     @Override
     public String toString() {
@@ -169,6 +173,8 @@ public class Tran {
                 ", description='" + description + '\'' +
                 ", contactSummary='" + contactSummary + '\'' +
                 ", nextContactTime='" + nextContactTime + '\'' +
+                ", possibility='" + possibility + '\'' +
+                ", orderNo='" + orderNo + '\'' +
                 '}';
     }
 
@@ -177,18 +183,23 @@ public class Tran {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Tran tran = (Tran) o;
-        return Objects.equals(id, tran.id) && Objects.equals(owner, tran.owner) && Objects.equals(money, tran.money) && Objects.equals(name, tran.name) && Objects.equals(expectedDate, tran.expectedDate) && Objects.equals(customerId, tran.customerId) && Objects.equals(stage, tran.stage) && Objects.equals(type, tran.type) && Objects.equals(source, tran.source) && Objects.equals(activityId, tran.activityId) && Objects.equals(contactsId, tran.contactsId) && Objects.equals(createBy, tran.createBy) && Objects.equals(createTime, tran.createTime) && Objects.equals(editBy, tran.editBy) && Objects.equals(editTime, tran.editTime) && Objects.equals(description, tran.description) && Objects.equals(contactSummary, tran.contactSummary) && Objects.equals(nextContactTime, tran.nextContactTime);
+        return Objects.equals(id, tran.id) && Objects.equals(owner, tran.owner) && Objects.equals(money, tran.money) && Objects.equals(name, tran.name) && Objects.equals(expectedDate, tran.expectedDate) && Objects.equals(customerId, tran.customerId) && Objects.equals(stage, tran.stage) && Objects.equals(type, tran.type) && Objects.equals(source, tran.source) && Objects.equals(activityId, tran.activityId) && Objects.equals(contactsId, tran.contactsId) && Objects.equals(createBy, tran.createBy) && Objects.equals(createTime, tran.createTime) && Objects.equals(editBy, tran.editBy) && Objects.equals(editTime, tran.editTime) && Objects.equals(description, tran.description) && Objects.equals(contactSummary, tran.contactSummary) && Objects.equals(nextContactTime, tran.nextContactTime) && Objects.equals(possibility, tran.possibility) && Objects.equals(orderNo, tran.orderNo);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, owner, money, name, expectedDate, customerId, stage, type, source, activityId, contactsId, createBy, createTime, editBy, editTime, description, contactSummary, nextContactTime);
+        return Objects.hash(id, owner, money, name, expectedDate, customerId, stage, type, source, activityId, contactsId, createBy, createTime, editBy, editTime, description, contactSummary, nextContactTime, possibility, orderNo);
     }
 
-    public Tran() {
+    public String getOrderNo() {
+        return orderNo;
     }
 
-    public Tran(String id, String owner, String money, String name, String expectedDate, String customerId, String stage, String type, String source, String activityId, String contactsId, String createBy, String createTime, String editBy, String editTime, String description, String contactSummary, String nextContactTime) {
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
+    }
+
+    public Tran(String id, String owner, String money, String name, String expectedDate, String customerId, String stage, String type, String source, String activityId, String contactsId, String createBy, String createTime, String editBy, String editTime, String description, String contactSummary, String nextContactTime, String possibility, String orderNo) {
         this.id = id;
         this.owner = owner;
         this.money = money;
@@ -207,6 +218,19 @@ public class Tran {
         this.description = description;
         this.contactSummary = contactSummary;
         this.nextContactTime = nextContactTime;
+        this.possibility = possibility;
+        this.orderNo = orderNo;
+    }
+
+    public String getPossibility() {
+        return possibility;
+    }
+
+    public void setPossibility(String possibility) {
+        this.possibility = possibility;
+    }
+
+    public Tran() {
     }
 
     /**

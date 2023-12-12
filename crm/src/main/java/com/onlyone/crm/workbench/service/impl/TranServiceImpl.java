@@ -5,6 +5,7 @@ import com.onlyone.crm.commons.utils.DateUtil;
 import com.onlyone.crm.commons.utils.UUIDUtil;
 import com.onlyone.crm.settings.domain.User;
 import com.onlyone.crm.workbench.domain.Customer;
+import com.onlyone.crm.workbench.domain.FunnelVO;
 import com.onlyone.crm.workbench.domain.Tran;
 import com.onlyone.crm.workbench.domain.TranHistory;
 import com.onlyone.crm.workbench.mapper.CustomerMapper;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -79,5 +81,15 @@ public class TranServiceImpl implements TranService {
         tranHistory.setStage(tran.getStage());
         tranHistory.setTranId(tran.getId());
         tranHistoryMapper.insertTranHistory(tranHistory);
+    }
+
+    @Override
+    public Tran queryTranForDetailById(String id) {
+        return tranMapper.selectTranForDetailById(id);
+    }
+
+    @Override
+    public List<FunnelVO> queryCountOfTranGroupByStage() {
+        return tranMapper.selectCountOfTranGroupByStage();
     }
 }
